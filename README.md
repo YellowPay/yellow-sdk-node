@@ -46,3 +46,16 @@ With no errors, you should see something similar to the following in your termin
 }
 
 ```
+To query an invoice that you created, just pass in the `invoice_id` to the `queryInvoice` function:
+```
+yellow.queryInvoice(api_key, api_secret, invoice_id, function(error, response, body){
+    if (!error && response.statusCode == 200) {
+        //print the result beautifully
+        console.log(JSON.stringify(body, null, 4));
+    } else if(error) {
+      console.log(error)
+    }
+
+});
+```
+With no errors, you should get the same invoice data you got when you created the invoice.
