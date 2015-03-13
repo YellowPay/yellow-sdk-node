@@ -6,12 +6,12 @@ sudo npm install yellow-sdk-node
 ```
 
 Examples
-------------------
+---------
 ```
 var yellow = require('yellow-sdk-node');
 
-var api_key = 'YOUR_API_KEY',
-    api_secret = 'YOUR_API_SECRET',
+var api_key = 'YOUR_API_KEY', // store it in environment variable for better security
+    api_secret = 'YOUR_API_SECRET', //// store it in environment variable for better security
     base_ccy = 'USD',
     base_price = '0.05',
     callback = 'https://example.com'; // Optional
@@ -59,3 +59,12 @@ yellow.queryInvoice(api_key, api_secret, invoice_id, function(error, response, b
 });
 ```
 With no errors, you should get the same invoice data you got when you created the invoice.
+
+Verify Yellow POST requests
+---------------------------
+To verify that the request you just receive really is from us, we created a helper function that checks the signature of the request. Just pass in your api_secret, the callback URL you passed when you created the invoice, and the request object.
+
+This function will return true if the signature matches (verified), or false if it doesn't match (not verified).
+```
+var isVerified = yellow.verifyIPN(api_secret, host_url, request)
+```
