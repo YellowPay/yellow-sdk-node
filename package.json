@@ -1,6 +1,6 @@
 {
   "name": "yellow-sdk-node",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Yellow Node.js SDK. An NPM module to easily integrate with the Yellow bitcoin payments API.",
   "main": "main.js",
   "dependencies": {
@@ -14,12 +14,9 @@
     "yellow",
     "sdk",
     "node",
-    "yellow",
-    "bitcoin",
     "yellowpay",
     "bitcoin",
     "api",
-    "bitcoin",
     "mena"
   ],
   "author": "Eslam A. Hefnawy <eslam@yellowpay.co> (https://yellowpay.co/)",
