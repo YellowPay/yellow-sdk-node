@@ -11,12 +11,12 @@ Examples
 var yellow = require('yellow-sdk-node');
 
 var api_key = 'YOUR_API_KEY', // store it in environment variable for better security
-    api_secret = 'YOUR_API_SECRET', //// store it in environment variable for better security
+    api_secret = 'YOUR_API_SECRET', // store it in environment variable for better security
     base_ccy = 'USD',
     base_price = '0.05',
-    callback = 'https://example.com'; // Optional
+    callback_url = 'https://example.com'; // Optional. To receive payment notifications from us
 
-yellow.createInvoice(api_key, api_secret, base_ccy, base_price, callback, function(error, response, body){
+yellow.createInvoice(api_key, api_secret, base_ccy, base_price, callback_url, function(error, response, body){
     if (!error && response.statusCode == 200) {
         //print the result beautifully
         console.log(JSON.stringify(body, null, 4));
@@ -60,7 +60,7 @@ yellow.queryInvoice(api_key, api_secret, invoice_id, function(error, response, b
 ```
 With no errors, you should get the same invoice data you got when you created the invoice.
 
-Verify Yellow POST requests
+Verifying Yellow POST requests
 ---------------------------
 To verify that the request you just receive really is from us, we created a helper function that checks the signature of the request. Just pass in your api_secret, the callback URL you passed when you created the invoice, and the request object.
 
