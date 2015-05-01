@@ -2,21 +2,23 @@ Yellow Node.js SDK
 =====================
 This is the Yellow Node SDK. This simple SDK contains couple of node functions that makes it easy to integrate with the Yellow API. To get started just:
 ```
-sudo npm install yellow-sdk-node
+sudo npm install yellow-sdk
 ```
 
 Examples
 ---------
 ```
-var yellow = require('yellow-sdk-node');
+var yellow = require('yellow-sdk');
 
-var api_key = 'YOUR_API_KEY', // store it in environment variable for better security
-    api_secret = 'YOUR_API_SECRET', // store it in environment variable for better security
-    base_ccy = 'USD',
-    base_price = '0.05',
-    callback_url = 'https://example.com'; // Optional. To receive payment notifications from us
+var api_key = 'Eo2XE5SrHcJVdqK9uIDU',
+    api_secret = '73jnZflRHpGReqFxzwF_JtynRNmZXoQspPaxTtsy',
+    payload = {
+            base_ccy   : "USD",
+            base_price : "0.05",
+            callback   : "https://merchant.com/callback-url"
+    };
 
-yellow.createInvoice(api_key, api_secret, base_ccy, base_price, callback_url, function(error, response, body){
+yellow.createInvoice(api_key, api_secret, payload, function(error, response, body){
     if (!error && response.statusCode == 200) {
         //print the result beautifully
         console.log(JSON.stringify(body, null, 4));
@@ -62,9 +64,8 @@ With no errors, you should get the same invoice data you got when you created th
 
 Verifying Yellow POST requests
 ---------------------------
-To verify that the request you just receive really is from us, we created a helper function that checks the signature of the request. Just pass in your api_secret, the callback URL you passed when you created the invoice, and the request object.
-
-This function will return true if the signature matches (verified), or false if it doesn't match (not verified).
+To verify that the request you just receive really is from us, we created a helper function that checks the signature of the request. This method will return true if the signature matches (verified), or false if it doesn't match (not verified).
 ```
-var isVerified = yellow.verifyIPN(api_secret, host_url, request)
+is_verified = yellow.verifyIPN(api_secret, host_url, request_nonce, request_signature, request_body)
 ```
+Since this method only works in the context of a web app, check the [full demo code](https://github.com/YellowPay/yellowdemo-node) for more info on how to use it.
