@@ -1,6 +1,6 @@
 {
   "name": "yellow-sdk",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Yellow Node.js SDK. An NPM module to easily integrate with the Yellow bitcoin payments API.",
   "main": "main.js",
   "dependencies": {
