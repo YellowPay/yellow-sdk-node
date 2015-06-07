@@ -1,12 +1,13 @@
 var assert = require('chai').assert,
     sinon = require('sinon'),
+    crypto  = require('crypto-js'),
     yellow = require('yellow-sdk');
     
 const DEFAULT_KEY = "KEY" 
 const DEFAULT_SECRET = "SECRET"
 const API_KEY = process.env.TEST_API_KEY
 const API_SECRET = process.env.TEST_API_SECRET
-const TEST_INVOICE_ID = "YBN4YC9FNMCPYMQZY3F8X55W9Y"
+const TEST_INVOICE_ID = ""
 const CALLBACK = "https://example.com/ipn"
 const BASE_CCY = "USD"
 const BASE_PRICE = "0.1"
@@ -44,6 +45,8 @@ describe('createInvoice()', function(){
       while (i--) {
         assert.include('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', body['id'][i]);
       }
+      
+      TEST_INVOICE_ID = body['id']
       
 
     });
@@ -153,7 +156,76 @@ describe('queryInvoice()', function(){
   
   it('should raise authentication error', function(){
     yellow.queryInvoice(DEFAULT_KEY, DEFAULT_SECRET, TEST_INVOICE_ID, function(error, response, body){
-      assert.notEqual(response.statusCode, 200);})
+      assert.notEqual(response.statusCode, 200);
+      })
   });
   
 });
+
+
+describe('verifyIPN()', function(){
+  it('should verify IPN', function(){
+    body = { 
+      'id': 'YBN4YC9FNMCPYMQZY3F8X55W9Y',
+      'order': null,
+      'url': '//cdn.yellowpay.co/invoice.9796a76b.html?invoiceId=YBN4YC9FNMCPYMQZY3F8X55W9Y',
+      'address': '1DGgddiCk9pY6oBwL1GQFSnKAc5ZHubh88',
+      'base_price': '0.10000000',
+      'base_ccy': 'USD',
+      'invoice_price': '0.00044228',
+      'invoice_ccy': 'BTC',
+      'expiration': '2015-06-03T18:37:04.433Z',
+      'server_time': '2015-06-07T21:19:11.072Z',
+      'callback': 'https://www.example.com/ipn',
+      'status': 'expired',
+      'received': '0',
+      'remaining': '0.00044228',
+      'style': 'cart' 
+    }
+    
+    nonce = (new Date).getTime();
+    
+    signature = getSignature(body['callback'], body, nonce, API_SECRET)
+    
+    isVerified = yellow.verifyIPN(API_SECRET, body['callback'], nonce, signature, body)
+    assert.ok(isVerified)
+  
+
+  });
+  
+  it('should NOT verify IPN', function(){
+    body = { 
+      'id': 'YBN4YC9FNMCPYMQZY3F8X55W9Y',
+      'order': null,
+      'url': '//cdn.yellowpay.co/invoice.9796a76b.html?invoiceId=YBN4YC9FNMCPYMQZY3F8X55W9Y',
+      'address': '1DGgddiCk9pY6oBwL1GQFSnKAc5ZHubh88',
+      'base_price': '0.10000000',
+      'base_ccy': 'USD',
+      'invoice_price': '0.00044228',
+      'invoice_ccy': 'BTC',
+      'expiration': '2015-06-03T18:37:04.433Z',
+      'server_time': '2015-06-07T21:19:11.072Z',
+      'callback': 'https://www.example.com/ipn',
+      'status': 'expired',
+      'received': '0',
+      'remaining': '0.00044228',
+      'style': 'cart' 
+    }
+    
+    nonce = (new Date).getTime();
+    signature = getSignature(body['callback'], body, nonce, API_SECRET)
+    malicious_nonce = '1433708553718';
+    
+    isVerified = yellow.verifyIPN(API_SECRET, body['callback'], malicious_nonce, signature, body)
+    assert.notOk(isVerified)
+  
+
+  });
+  
+});
+
+
+function getSignature(url, body, nonce, api_secret){
+    var message = nonce.toString() + url + body;
+    return crypto.HmacSHA256(message, api_secret).toString();
+}
